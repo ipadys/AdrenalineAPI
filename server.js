@@ -40,7 +40,7 @@ app.use('/api/', limiter);
 
 // Валидация формата ключа
 const validateKeyFormat = (key) => {
-  return /^[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}$/.test(key);
+  return /^[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}$/.test(key);
 };
 
 // Генерация fingerprint из нескольких параметров
@@ -355,3 +355,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
