@@ -38,11 +38,6 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-// Валидация формата ключа
-const validateKeyFormat = (key) => {
-  return /^[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}-[A-Za-z0-9]{5}$/.test(key);
-};
-
 // Генерация fingerprint из нескольких параметров
 const generateFingerprint = (userId, clientId, jobId) => {
   const data = `${userId}-${clientId}-${jobId}`;
@@ -59,13 +54,6 @@ app.post('/api/verify-key', async (req, res) => {
       return res.status(400).json({ 
         success: false, 
         message: 'Missing key or userId' 
-      });
-    }
-
-    if (!validateKeyFormat(key)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid key format' 
       });
     }
 
@@ -355,4 +343,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
 
