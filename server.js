@@ -62,23 +62,12 @@ app.post('/api/verify-key', async (req, res) => {
       return res.status(403).json({ success: false, message: "User not allowed" });
     }
 
-    // Проверка fingerprint
-    found.data.fingerprints = found.data.fingerprints || {};
-    const fingerprint = generateFingerprint(userId, clientId || '', jobId || '');
-    if (found.data.fingerprints[userId] && found.data.fingerprints[userId] !== fingerprint) {
-      return res.status(403).json({ success: false, message: "Device mismatch. Key locked." });
-    } else {
-      found.data.fingerprints[userId] = fingerprint;
-    }
-
-    // Обновляем lastUsed и fingerprints
     await fetch(`https://adrebaline-7fd8d-default-rtdb.firebaseio.com/keys/${found.ownerId}.json`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         lastUsed: now,
         lastUserId: String(userId),
-        fingerprints: found.data.fingerprints
       })
     });
 
@@ -173,14 +162,11 @@ app.post('/api/remove-alt', async (req, res) => {
       return res.status(400).json({ success: false, message: "User not in allowed list" });
 
     found.data.allowedUsers = found.data.allowedUsers.filter(u => u !== altStr);
-    if (found.data.fingerprints && found.data.fingerprints[altStr]) delete found.data.fingerprints[altStr];
-
     await fetch(`https://adrebaline-7fd8d-default-rtdb.firebaseio.com/keys/${found.ownerId}.json`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         allowedUsers: found.data.allowedUsers,
-        fingerprints: found.data.fingerprints || {}
       })
     });
 
@@ -197,3 +183,4 @@ app.get('/health', (_, res) => res.json({ status: 'ok', timestamp: Date.now() })
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
