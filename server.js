@@ -9,13 +9,21 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Инициализация Firebase
+const serviceAccount = {
+  type: "service_account",
+  project_id: "adrebaline-7fd8d",
+  private_key_id: "417857b8024b1788750fc0264e91222abfebf0c2",
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC3DcdVNhS9rzoy\n60BxLqpIhjCZJkmhZH0cGcMEfCgOP6GKkgtGXxfDfXvaksPXpfsGyF5ImmKj5Hzw\nDNetcAbDGFUWdE7p1YnGJyEy+OZ+pzrucFvABrT30y+o5RHWz4qsGnXXjXYEwFIq\nHnTYBcfAHB38W4UhBYHpSCFNSlAAEXnsHLPsTe1n315auj7xrGLC2aIXbZIttco2\nwtE5dIAOTiLCC/87KGtnEMQ8N4JPCfYhXWT3nxIpS6gUp7YMQpaBF2fhz262vGBJ\nldCZnRPH7CWrWPyRROtaWxqIo8U81vKp98gaw6O6TqdLuw0B93AobCdwgVr5WjdS\nLig66UWRAgMBAAECggEAFIt/2VD6D/YIPqnHsExQAVbKQo4ZCnuoTQyZJjo3Fq5O\nl6pfiJToqmC9k2EQiPYQkAjSCC0HsCRXX2vZkxY1NBVZi20fZEA6t9oxcDKeUA29\n4AANVCaMjhoOSdL35xehFULdAgXW/p6FOkPz0kEH08h0FxxAe13OYFvfnPiftPoQ\nkLqwfq0r7qWG3aiAos+OJGnwMus/KR8lZEmPqxEwCk7rRf1BuMO1HkPPBylfSRWZ\nnGrwA1d9mXvhkpCIJ4i4rk1haw0JIdDrHODQ/KhYJNSIAcYKu3qIEXYZeulRC0LT\nmWxriIJbzC9JncHj6hDy9uzIKhQgD/wyA2pErFTZ4QKBgQDZQX0dQA6yGdqK4mld\nQTB9muf0wM3gu2pIiLWGeujdpCU8aEqyf9WsYOllZYaqEhh1hJ3y+zId1+sYHmBm\ntp1Uhk+jNrODzgTinBWVnYdRb/1ZSX5lM+PakNmsJTpwLbTKKRaQwsV6JAf3setc\nxqH6EEuhF7/jvfqD0p9UxZOlSQKBgQDXsth8MRZwDm7+sKIah9gBWSdpDuCiam+d\neR3pkUDR2j9CKpy2qBi2/Dy61//Z8ekA4aPz3UscEJcmeSwe1UIg96DidoEsU/98\nORoNBu6p9RD2zC2UuA0vw0mJx1K2FvOPiBnTgt/+hAS9T97FGSTN7R5G3ogjismO\np44gedLGCQKBgG//Y7lFgY3s6A265GhPp+jIh5VUI44b75GO8E1wZUWFTjDS7tcQ\nMZ3Yo9lCumZIR9WlVSuitVZPLgHT/wxUTcz6JGnWVDq5ZSlRH4tulwize96glYkk\nc+0DyUMGOhcEaPPitKBR2C28D2NwlA3S1EOuTN6x+Jk2IcP9O2gfJpsJAoGAWx1t\nXWjO9Z7jPCsZDuP7VvZ2M2bZdUJIy9hxzkxReVQcDLM7Z90yM3nxnWvI5CPQLVMj\nkswUAlLvxozBGnUzbgGssH0mq7b/4VWtr3sSLjEbbWVqi7wDtf1kfxL32Xtwf10a\nq8JJJJZX+jBXBiNM7MARXhZ6o6jo453b59QOOSECgYA8I8OlNHofW7482oQelDYL\n6UmnDxkhlnN9/ZnR0Al4c5oD9ZOMff+CoN1cw4WfX0poAe9eOg0u0GrtwTGiLMhL\nIJDDlvuxdwNLBlxZi0LBu1NHs/ht2iCrBlzR/q7BeNB+52ZNoKL0p74ZsPRbXnKV\n70qLRhct/WpRsBCs4BeLhw==\n-----END PRIVATE KEY-----\n",
+  client_id: "116347977401492423609",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40adrebaline-7fd8d.iam.gserviceaccount.com",
+};
+
 admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-  }),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://your-project-id.firebaseio.com"
 });
 
 const db = admin.database();
@@ -345,5 +353,4 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-
 });
