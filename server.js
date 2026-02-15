@@ -3,10 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const fetch = require('node-fetch'); // npm install node-fetch@2
+const { encryptedResponse } = require('./server_encrypted');
+
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(encryptedResponse);
 
 // Rate limiting
 const limiter = rateLimit({
