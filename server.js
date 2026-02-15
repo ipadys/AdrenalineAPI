@@ -15,22 +15,17 @@ app.use(cors());
 const SHARED_SECRET = "a7f3k9m2p5q8s1v4w6x0y3z8b2d5e7h1"; // ровно 32 символа
 
 function encryptResponse(data) {
-  const iv = crypto.randomBytes(16);
-  const key = Buffer.from(SHARED_SECRET, 'utf8');
-  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-  
-  // Шифруем только строку с данными, а не весь объект
+  const key = SHARED_SECRET;
   const plaintext = JSON.stringify(data);
-  let encrypted = cipher.update(plaintext, 'utf8', 'base64');
-  encrypted += cipher.final('base64');
-  
-  const toB64url = (s) => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  
-  // Возвращаем МИНИМАЛЬНО — только iv и data, без hmac
-  return {
-    i: toB64url(iv.toString('base64')),  // короткие ключи
-    d: toB64url(encrypted)
-  };
+  let encrypted = '';
+  for (let i = 0; i < plaintext.length; i++) {
+    encrypted += String.fromCharCode(
+      plaintext.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+    );
+  }
+  // Конвертируем в hex — никаких проблем с символами
+  const hex = Buffer.from(encrypted, 'binary').toString('hex');
+  return { d: hex };
 }
 
 // Middleware — все res.json() автоматически шифруются
