@@ -18,21 +18,19 @@ function encryptResponse(data) {
   const iv = crypto.randomBytes(16);
   const key = Buffer.from(SHARED_SECRET, 'utf8');
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-  const jsonStr = JSON.stringify(data);
-  let encrypted = cipher.update(jsonStr, 'utf8', 'base64');
+  
+  // Шифруем только строку с данными, а не весь объект
+  const plaintext = JSON.stringify(data);
+  let encrypted = cipher.update(plaintext, 'utf8', 'base64');
   encrypted += cipher.final('base64');
   
-  // base64url — заменяем проблемные символы + / =
-  const toBase64url = (str) => str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  const toB64url = (s) => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   
-  const ivB64 = toBase64url(iv.toString('base64'));
-  const dataB64 = toBase64url(encrypted);
-  
-  const hmac = crypto.createHmac('sha256', key)
-    .update(ivB64 + dataB64)
-    .digest('base64');
-    
-  return { iv: ivB64, data: dataB64, hmac: toBase64url(hmac) };
+  // Возвращаем МИНИМАЛЬНО — только iv и data, без hmac
+  return {
+    i: toB64url(iv.toString('base64')),  // короткие ключи
+    d: toB64url(encrypted)
+  };
 }
 
 // Middleware — все res.json() автоматически шифруются
